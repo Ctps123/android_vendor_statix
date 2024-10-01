@@ -5,10 +5,11 @@ UM_4_19_FAMILY := $(KONA) $(LITO) $(BENGAL)
 UM_5_4_FAMILY := $(LAHAINA) $(HOLI)
 UM_5_10_FAMILY := $(TARO) $(PARROT)
 UM_5_15_FAMILY := $(KALAMA)
+UM_5_15_BENGAL_FAMILY:= $(BENGAL)
 UM_6_1_FAMILY := $(PINEAPPLE)
 
-UM_PLATFORMS := $(UM_4_4_FAMILY) $(UM_4_9_FAMILY) $(UM_4_14_FAMILY) $(UM_4_19_FAMILY) $(UM_5_4_FAMILY) $(UM_5_10_FAMILY) $(UM_5_15_FAMILY) $(UM_6_1_FAMILY)
-QSSI_SUPPORTED_PLATFORMS := $(UM_4_4_FAMILY) $(UM_4_9_FAMILY) $(UM_4_14_FAMILY) $(UM_4_19_FAMILY) $(UM_5_4_FAMILY) $(UM_5_10_FAMILY) $(UM_5_15_FAMILY) $(UM_6_1_FAMILY)
+UM_PLATFORMS := $(UM_4_4_FAMILY) $(UM_4_9_FAMILY) $(UM_4_14_FAMILY) $(UM_4_19_FAMILY) $(UM_5_4_FAMILY) $(UM_5_10_FAMILY) $(UM_5_15_FAMILY) $(UM_5_15_BENGAL_FAMILY) $(UM_6_1_FAMILY)
+QSSI_SUPPORTED_PLATFORMS := $(UM_4_4_FAMILY) $(UM_4_9_FAMILY) $(UM_4_14_FAMILY) $(UM_4_19_FAMILY) $(UM_5_4_FAMILY) $(UM_5_10_FAMILY) $(UM_5_15_FAMILY) $(UM_5_15_BENGAL_FAMILY) $(UM_6_1_FAMILY)
 UM_NO_GKI_PLATFORMS := $(UM_4_4_FAMILY) $(UM_4_9_FAMILY) $(UM_4_14_FAMILY) $(UM_4_19_FAMILY) $(UM_5_4_FAMILY)
 
 BOARD_USES_ADRENO := true
@@ -63,23 +64,23 @@ ifeq ($(call is-board-platform-in-list, $(UM_PLATFORMS)),true)
 endif
 
 # Enable DRM PP driver on UM platforms that support it
-ifeq ($(call is-board-platform-in-list, $(UM_4_9_FAMILY) $(UM_4_14_FAMILY) $(UM_4_19_FAMILY) $(UM_5_4_FAMILY) $(UM_5_10_FAMILY) $(UM_5_15_FAMILY) $(UM_6_1_FAMILY)),true)
+ifeq ($(call is-board-platform-in-list, $(UM_4_9_FAMILY) $(UM_4_14_FAMILY) $(UM_4_19_FAMILY) $(UM_5_4_FAMILY) $(UM_5_10_FAMILY) $(UM_5_15_FAMILY) $(UM_5_15_BENGAL_FAMILY) $(UM_6_1_FAMILY)),true)
     SOONG_CONFIG_qtidisplay_drmpp := true
     TARGET_USES_DRM_PP := true
 endif
 
 # Enable displayconfig
-ifeq ($(call is-board-platform-in-list, $(UM_5_10_FAMILY) $(UM_5_15_FAMILY) $(UM_6_1_FAMILY)),true)
+ifeq ($(call is-board-platform-in-list, $(UM_5_10_FAMILY) $(UM_5_15_FAMILY) $(UM_5_15_BENGAL_FAMILY) $(UM_6_1_FAMILY)),true)
     SOONG_CONFIG_qtidisplay_displayconfig_enabled := true
 endif
 
 # Enable gralloc handle support on 5.10
-ifeq ($(call is-board-platform-in-list, $(UM_5_10_FAMILY) $(UM_5_15_FAMILY) $(UM_6_1_FAMILY)),true)
+ifeq ($(call is-board-platform-in-list, $(UM_5_10_FAMILY) $(UM_5_15_FAMILY) $(UM_5_15_BENGAL_FAMILY) $(UM_6_1_FAMILY)),true)
     SOONG_CONFIG_qtidisplay_gralloc_handle_has_reserved_size := true
 endif
 
 # Enable Gralloc4 on UM platforms that support it
-ifneq ($(filter $(UM_5_4_FAMILY) $(UM_5_10_FAMILY) $(UM_5_15_FAMILY) $(UM_6_1_FAMILY),$(PRODUCT_BOARD_PLATFORM)),)
+ifneq ($(filter $(UM_5_4_FAMILY) $(UM_5_10_FAMILY) $(UM_5_15_FAMILY) $(UM_5_15_BENGAL_FAMILY) $(UM_6_1_FAMILY),$(PRODUCT_BOARD_PLATFORM)),)
     SOONG_CONFIG_qtidisplay_gralloc4 := true
 endif
 
@@ -103,6 +104,9 @@ else ifeq ($(call is-board-platform-in-list, $(UM_5_10_FAMILY)),true)
     QCOM_HARDWARE_VARIANT := sm8450
 else ifeq ($(call is-board-platform-in-list, $(UM_5_15_FAMILY)),true)
     QCOM_HARDWARE_VARIANT := sm8550
+else ifneq ($(filter $(UM_4_19_BENGAL_FAMILY) $(UM_5_15_BENGAL_FAMILY),$(TARGET_BOARD_PLATFORM)),)
+ifeq ($(TARGET_BOARD_PLATFORM)$(TARGET_BOARD_SUFFIX),bengal_515)
+    QCOM_HARDWARE_VARIANT := sm6225
 else ifeq ($(call is-board-platform-in-list, $(UM_6_1_FAMILY)),true)
     QCOM_HARDWARE_VARIANT := sm8650
 else
@@ -126,7 +130,7 @@ else ifeq ($(call is-board-platform-in-list, $(UM_5_4_FAMILY)),true)
     TARGET_KERNEL_VERSION := 5.4
 else ifeq ($(call is-board-platform-in-list, $(UM_5_10_FAMILY)),true)
     TARGET_KERNEL_VERSION := 5.10
-else ifeq ($(call is-board-platform-in-list, $(UM_5_15_FAMILY)),true)
+else ifeq ($(call is-board-platform-in-list, $(UM_5_15_FAMILY)) $(UM_5_15_BENGAL_FAMILY)),true)
     TARGET_KERNEL_VERSION := 5.15
 else ifeq ($(call is-board-platform-in-list, $(UM_6_1_FAMILY)),true)
     TARGET_KERNEL_VERSION := 6.1
